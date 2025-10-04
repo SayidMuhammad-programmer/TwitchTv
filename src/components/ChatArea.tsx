@@ -15,95 +15,8 @@ interface ChatAreaProps {
   viewerCount?: number;
 }
 
-const defaultMessages = [
-  {
-    id: '1',
-    username: 'xX_GamerPro_Xx',
-    message: 'W RIZZ',
-    isStreamer: false,
-  },
-  {
-    id: '2',
-    username: 'MiamiNightz',
-    message: 'LMAOOO she was not feeling it',
-    isStreamer: false,
-  },
-  {
-    id: '3',
-    username: 'WavyVibes88',
-    message: 'Bro ask her what her sign is',
-    isStreamer: false,
-  },
-  {
-    id: '4',
-    username: '305_Player',
-    message: 'This stream is fire 🔥',
-    isStreamer: false,
-  },
-  {
-    id: '5',
-    username: 'SavageSam',
-    message: "She's a 10 but she likes pineapple on pizza",
-    isStreamer: false,
-  },
-  {
-    id: '6',
-    username: 'ClutchKing42',
-    message: "He's got that unspoken rizz",
-    isStreamer: false,
-  },
-  {
-    id: '7',
-    username: 'J-Roc',
-    message: 'AYOOO',
-    isStreamer: false,
-  },
-  {
-    id: '8',
-    username: 'SlickRick',
-    message: 'nah he fumbled that one',
-    isStreamer: false,
-  },
-  {
-    id: '9',
-    username: 'BasedGodflow',
-    message: 'Clip it!',
-    isStreamer: false,
-  },
-  {
-    id: '10',
-    username: 'WRLD_On_DRGS',
-    message: 'KEKW',
-    isStreamer: false,
-  },
-  {
-    id: '11',
-    username: 'VibeMaster',
-    message: 'Is that a filter or is she really that...',
-    isStreamer: false,
-  },
-  {
-    id: '12',
-    username: 'TheRealDeal',
-    message: 'Bro is bricked up',
-    isStreamer: false,
-  },
-  {
-    id: '13',
-    username: 'ChillFactor',
-    message: 'the AUDACITY',
-    isStreamer: false,
-  },
-  {
-    id: '14',
-    username: 'GamerGod',
-    message: 'Tell her my boy Bilal wants her number',
-    isStreamer: false,
-  },
-];
-
 export default function ChatArea({ 
-  messages = defaultMessages, 
+  messages, 
   viewerCount: initialViewerCount = 1000 
 }: ChatAreaProps) {
   const [viewerCount, setViewerCount] = useState(initialViewerCount);
@@ -161,7 +74,7 @@ export default function ChatArea({
         className="flex-1 overflow-y-auto scrollbar-hide"
       >
         <div className="flex flex-col space-y-0">
-          {messages.map((message) => (
+          {messages?.map((message) => (
             <ChatMessage
               key={message.id}
               username={message.username}
