@@ -399,14 +399,37 @@ export default function Home() {
     stopHoldSpam();
   };
 
-  const handleDoubleClick = () => {
+  const burstIntervalRef = useRef<number | null>(null);
+  const burstStopTimeoutRef = useRef<number | null>(null);
+
+  const stopSpamBurst = () => {
+    if (burstIntervalRef.current !== null) {
+      clearInterval(burstIntervalRef.current);
+      burstIntervalRef.current = null;
+    }
+    if (burstStopTimeoutRef.current !== null) {
+      clearTimeout(burstStopTimeoutRef.current);
+      burstStopTimeoutRef.current = null;
+    }
+  };
+
+  const triggerSpamBurst = (durationMs: number) => {
+    stopSpamBurst();
     triggerSpecialMessage();
+    burstIntervalRef.current = window.setInterval(triggerSpecialMessage, 400);
+    burstStopTimeoutRef.current = window.setTimeout(() => {
+      stopSpamBurst();
+    }, durationMs);
+  };
+
+  const handleDoubleClick = () => {
+    triggerSpamBurst(4000);
   };
 
   const handleTouchStart = () => {
     const now = Date.now();
     if (now - lastTouchTimestampRef.current < 300) {
-      triggerSpecialMessage();
+      triggerSpamBurst(4000);
     }
     lastTouchTimestampRef.current = now;
   };
@@ -414,6 +437,7 @@ export default function Home() {
   useEffect(() => {
     return () => {
       stopHoldSpam();
+      stopSpamBurst();
     };
   }, []);
 
