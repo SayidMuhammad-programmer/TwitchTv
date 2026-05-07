@@ -176,35 +176,11 @@ export default function Home() {
 
   const randomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
-  // Special messages array: populate with any phrases you like
-  const specialMessages = useMemo(
-    () => [
-      'Tell shawty do the thing',
-      '360?😩 ',
-      'WOOOO SPECIAL DROP!',
-      'Camera angle insane fr',
-      'GYATTT',
-      'ask her where she from',
-      'is she single tho??',
-      'bro is blushing',
-      'W rizz',
-      "She's feeling the vibe",
-      'That was smooth',
-      'He fumbled the bag',
-      "Nah she's trolling",
-      'She wants you fr',
-      "What's her @?",
-      'She valid',
-      'tell her I said wassup',
-      "I'm tryna wife her up fr",
-      'shes a baddie',
-      'can I get her snap?',
-      'she could ruin my life and I\'d say thank you',
-      "whats her @",
-      "ask her if she do jumping jacks on the D "
-    ],
-    []
-  );
+  const generateWSpam = () => {
+    const length = 1 + Math.floor(Math.random() * 20);
+    const char = Math.random() < 0.75 ? 'W' : 'w';
+    return char.repeat(length);
+  };
 
   const pickWeightedCategory = () => {
     const entries = Object.entries(themeWeights);
@@ -378,9 +354,8 @@ export default function Home() {
   };
 
   const triggerSpecialMessage = () => {
-    if (!specialMessages.length) return;
     const user = randomItem(simulatedUsers);
-    const text = randomItem(specialMessages);
+    const text = generateWSpam();
     const id = (Date.now() + Math.random()).toString();
     setMessages(prev => {
       const next = [
@@ -397,6 +372,33 @@ export default function Home() {
     });
   };
 
+  const holdSpamTimerRef = useRef<number | null>(null);
+  const holdSpamIntervalRef = useRef<number | null>(null);
+
+  const stopHoldSpam = () => {
+    if (holdSpamTimerRef.current !== null) {
+      clearTimeout(holdSpamTimerRef.current);
+      holdSpamTimerRef.current = null;
+    }
+    if (holdSpamIntervalRef.current !== null) {
+      clearInterval(holdSpamIntervalRef.current);
+      holdSpamIntervalRef.current = null;
+    }
+  };
+
+  // Wait 200ms before treating a press as a "hold", so taps/double-taps still work cleanly.
+  const handlePointerDown = () => {
+    stopHoldSpam();
+    holdSpamTimerRef.current = window.setTimeout(() => {
+      triggerSpecialMessage();
+      holdSpamIntervalRef.current = window.setInterval(triggerSpecialMessage, 110);
+    }, 200);
+  };
+
+  const handlePointerUp = () => {
+    stopHoldSpam();
+  };
+
   const handleDoubleClick = () => {
     triggerSpecialMessage();
   };
@@ -408,6 +410,12 @@ export default function Home() {
     }
     lastTouchTimestampRef.current = now;
   };
+
+  useEffect(() => {
+    return () => {
+      stopHoldSpam();
+    };
+  }, []);
 
   // Randomly add messages from simulated users on a rolling cadence
   useEffect(() => {
@@ -515,7 +523,15 @@ export default function Home() {
   };
 
   return (
-    <div className="mobile-container" onDoubleClick={handleDoubleClick} onTouchStart={handleTouchStart}>
+    <div
+      className="mobile-container"
+      onDoubleClick={handleDoubleClick}
+      onTouchStart={handleTouchStart}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      onPointerLeave={handlePointerUp}
+      onPointerCancel={handlePointerUp}
+    >
       <div className="flex flex-col h-full">
         {/* Profile Header with Gradient Background */}
         <ProfileHeader />
