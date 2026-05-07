@@ -177,7 +177,7 @@ export default function Home() {
   const randomItem = <T,>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
   const generateWSpam = () => {
-    const length = 1 + Math.floor(Math.random() * 20);
+    const length = 1 + Math.floor(Math.random() * 5);
     const char = Math.random() < 0.75 ? 'W' : 'w';
     return char.repeat(length);
   };
@@ -391,7 +391,7 @@ export default function Home() {
     stopHoldSpam();
     holdSpamTimerRef.current = window.setTimeout(() => {
       triggerSpecialMessage();
-      holdSpamIntervalRef.current = window.setInterval(triggerSpecialMessage, 110);
+      holdSpamIntervalRef.current = window.setInterval(triggerSpecialMessage, 400);
     }, 200);
   };
 
